@@ -3,5 +3,5 @@
 C AddProduct
 F id            int
 F name          char[]
-F orderCode     int
+F orderCode     String
 E

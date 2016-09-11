@@ -4,9 +4,9 @@ public class AddProduct {
 
     private int id;
     private char[] name;
-    private int orderCode;
+    private String orderCode;
 
-    public AddProduct(int id, char[] name, int orderCode) {
+    public AddProduct(int id, char[] name, String orderCode) {
         this.id = id;
         this.name = name;
         this.orderCode = orderCode;
@@ -28,11 +28,11 @@ public class AddProduct {
         this.name = name;
     }
 
-    public int getOrderCode() {
+    public String getOrderCode() {
         return orderCode;
     }
 
-    public void setOrderCode(int orderCode) {
+    public void setOrderCode(String orderCode) {
         this.orderCode = orderCode;
     }
 
