@@ -2,6 +2,6 @@
 // to the 'on-order' list
 C AddProduct
 F id            int
-F name          char[30]
+F name          char[]
 F orderCode     int
 E

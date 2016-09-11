@@ -1,1 +1,1 @@
-from .alchemist import Alchemist
+from .core import Alchemist

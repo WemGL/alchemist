@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from .context import alchemist
+from context import alchemist
 import unittest
 
 

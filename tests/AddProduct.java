@@ -3,7 +3,7 @@
 public class AddProduct {
 
     private int id;
-    private char[] name = new char[30];
+    private char[] name;
     private int orderCode;
 
     public AddProduct(int id, char[] name, int orderCode) {
@@ -33,7 +33,7 @@ public class AddProduct {
     }
 
     public void setOrderCode(int orderCode) {
-        this.orderCode = orderCode
+        this.orderCode = orderCode;
     }
 
 }
