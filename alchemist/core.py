@@ -24,10 +24,9 @@ class Alchemist:
         extension_pattern = re.compile("^Java$")
         comment_pattern = re.compile("^[/]{2}\s.*$")
         class_pattern = re.compile("^C\s(([A-Z](?=[a-z])[a-z]+)+)$")
-        field_pattern = re.compile("^F\s(\b(?:[a-z]+)(?=[A-Z]+)(?:[A-Za-z]+)|(?:[a-z]+)\b)\s*(("
-                                   "?:["
-                                   "A-Z]?["
-                                   "a-z]+(:?:[\[]])?))$")
+        field_pattern = \
+            re.compile("^F\s(\\b(?:[a-z]+)(?=[A-Z]+)(?:[A-Za-z]+)|[a-z]+\\b)\s*((?:[A-Z]?[a-z]+("
+                       "?:[[]])?))$")
         end_pattern = re.compile("^E$")
 
         fh = open("input.txt")
@@ -41,13 +40,16 @@ class Alchemist:
         parser = alchemist.JavaParser()
         comments = []
         for line in fh:
+            line = line.strip("\n")
             match = class_pattern.search(line)
             if match:
                 classname = match.group(1)
                 filename = "{}.{}".format(classname, file_extension.lower())
                 parser.file = open(filename, "w")
-                joined_comments = "\n".join(comments)
-                print(joined_comments, file=parser.file)
+                if len(comments) > 0:
+                    joined_comments = "\n".join(comments)
+                    print(joined_comments, file=parser.file)
+                    comments.clear()
 
                 print("public class {} {{".format(classname), file=parser.file)
                 continue
@@ -56,6 +58,18 @@ class Alchemist:
             if match:
                 comments.append(match.group(0))
                 continue
+
+            match = field_pattern.search(line)
+            if match:
+                if len(comments) > 0:
+                    joined_comments = "\n".join(comments)
+                    print(joined_comments, file=parser.file)
+                    comments.clear()
+
+                print("    {} {};".format(match.group(2), match.group(1)), file=parser.file)
+                continue
+
+        # WGL: Check if the file is closed here. If not, then close it.
 
 
 def main():
