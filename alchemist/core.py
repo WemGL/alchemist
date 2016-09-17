@@ -48,6 +48,8 @@ class Alchemist:
                 parser.file = open(filename, "w")
                 joined_comments = "\n".join(comments)
                 print(joined_comments, file=parser.file)
+
+                print("public class {} {{".format(classname), file=parser.file)
                 continue
 
             match = comment_pattern.search(line)
