@@ -21,7 +21,6 @@ class TestAlchemist(unittest.TestCase):
         self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
-        self.assertEquals(2, len(lines))
         self.assertTrue("// Add a product", lines[0].strip("\n"))
         self.assertTrue("// to the 'on-order' list", lines[1].strip("\n"))
 
