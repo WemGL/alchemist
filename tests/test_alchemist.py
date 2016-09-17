@@ -21,17 +21,25 @@ class TestAlchemist(unittest.TestCase):
         self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
-        self.assertEquals(2, len(lines))
-        self.assertTrue("// Add a product", lines[0].strip("\n"))
-        self.assertTrue("// to the 'on-order' list", lines[1].strip("\n"))
+        self.assertEquals("// Add a product", lines[0].strip("\n"))
+        self.assertEquals("// to the 'on-order' list", lines[1].strip("\n"))
 
     def test_transmute_writes_class_to_file(self):
         self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
-        self.assertTrue("public class AddProduct {", lines[2].strip("\n"))
+        self.assertEquals("public class AddProduct {", lines[2].strip("\n"))
+
+    def test_transmute_writes_fields_to_output_file(self):
+        self._alchemist.transmute()
+        fh = open("AddProduct.java", "r")
+        lines = fh.readlines()
+        self.assertEquals("    int id;", lines[3].strip("\n"))
+        self.assertEquals("    char[] name;", lines[4].strip("\n"))
+        self.assertEquals("    String orderCode;", lines[5].strip("\n"))
 
     def tearDown(self):
+        # self.skipTest("To verify output")
         os.remove("./AddProduct.java")
 
 
