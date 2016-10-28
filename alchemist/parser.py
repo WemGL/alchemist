@@ -23,16 +23,16 @@ class Parser:
     def file(self):
         del self._properties["file"]
 
-    def get_comment_pattern(self, line):
+    def matched_comment_pattern(self, line):
         pass
 
-    def get_class_pattern(self, line):
+    def matched_class_pattern(self, line):
         pass
 
-    def get_field_pattern(self, line):
+    def matched_field_pattern(self, line):
         pass
 
-    def get_end_pattern(self, line):
+    def matched_end_pattern(self, line):
         pass
 
 
