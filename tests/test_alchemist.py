@@ -11,27 +11,27 @@ class TestAlchemist(unittest.TestCase):
     A set of tests for the Alchemist code generation package.
     """
     def setUp(self):
-        self._alchemist = alchemist.Alchemist("input.txt")
+        self._alchemist = alchemist.Alchemist("Java", "input.txt")
 
     def test_transmute_creates_java_file(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         self.assertTrue(os.path.isfile("./AddProduct.java"))
 
     def test_transmute_writes_comments_to_file(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEquals("// Add a product", lines[0].strip("\n"))
         self.assertEquals("// to the 'on-order' list", lines[1].strip("\n"))
 
     def test_transmute_writes_class_to_file(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEquals("public class AddProduct {", lines[2].strip("\n"))
 
     def test_transmute_writes_fields_to_output_file(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEquals("    int id;", lines[3].strip("\n"))
@@ -39,13 +39,13 @@ class TestAlchemist(unittest.TestCase):
         self.assertEquals("    String orderCode;", lines[5].strip("\n"))
 
     def test_transmute_writes_end_of_class_brace(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEquals("}", lines[37].strip("\n"))
 
     def test_transmute_writes_constructor_to_file(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEquals("    public AddProduct(int id, char[] name, String orderCode) {", lines[7].strip("\n"))
@@ -56,7 +56,7 @@ class TestAlchemist(unittest.TestCase):
 
 
     def test_transmute_writes_accessors_and_mutators(self):
-        self._alchemist.transmute("Java")
+        self._alchemist.transmute()
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
         self.assertEqual("    public int getId() {", lines[13].strip("\n"))

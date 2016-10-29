@@ -15,11 +15,15 @@ with open('LICENSE') as f:
 setup(
     name='alchemist',
     version='1.0.0',
-    description='A code generation tool',
+    description='A Java code generation tool',
     long_description=readme,
     author='Wembley G. Leach, Jr.',
     author_email='wembley.gl@gmail.com',
     url='https://github.com/WemGL/alchemist',
     license=license,
-    packages=find_packages(exclude=('tests',))
+    packages=find_packages(exclude=('tests',)),
+    zip_safe=False,
+    entry_points={
+        'console_scripts': ['alchemist-java=alchemist.core:main']
+    }
 )
