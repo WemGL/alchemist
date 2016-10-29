@@ -36,11 +36,14 @@ class JavaParser(Parser):
         self._classname = self._current_match.group(1)
         filename = "{}.{}".format(self._classname, self._file_extension.lower())
         self.file = open(filename, "w")
+        self.format_and_write_comments(comments)
+        print("public class {} {{".format(self._classname), file=self.file)
+
+    def format_and_write_comments(self, comments):
         if len(comments) > 0:
             joined_comments = "\n".join(comments)
             print(joined_comments, file=self.file)
             comments.clear()
-        print("public class {} {{".format(self._classname), file=self.file)
 
     def matched_comment_pattern(self, line):
         self._current_match = re.compile(r'^[/]{2}\s.*$').search(line)
@@ -54,10 +57,7 @@ class JavaParser(Parser):
         return self._current_match is not None
 
     def parse_field_match(self, comments):
-        if len(comments) > 0:
-            joined_comments = "\n".join(comments)
-            print(joined_comments, file=self.file)
-            comments.clear()
+        self.format_and_write_comments(comments)
         type = self._current_match.group(2)
         identifier = self._current_match.group(1)
         field = dict()
