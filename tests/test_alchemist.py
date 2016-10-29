@@ -42,7 +42,18 @@ class TestAlchemist(unittest.TestCase):
         self._alchemist.transmute("Java")
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
-        self.assertEquals("}", lines[6].strip("\n"))
+        self.assertEquals("}", lines[12].strip("\n"))
+
+    def test_transmute_writes_constructor_to_file(self):
+        self._alchemist.transmute("Java")
+        fh = open("AddProduct.java", "r")
+        lines = fh.readlines()
+        self.assertEquals("    public AddProduct(int id, char[] name, String orderCode) {", lines[7].strip("\n"))
+        self.assertEquals("        this.id = id;", lines[8].strip("\n"))
+        self.assertEquals("        this.name = name;", lines[9].strip("\n"))
+        self.assertEquals("        this.orderCode = orderCode;", lines[10].strip("\n"))
+        self.assertEquals("    }", lines[11].strip("\n"))
+
 
     def tearDown(self):
         # self.skipTest("To verify output")
