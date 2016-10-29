@@ -80,7 +80,7 @@ class JavaParser(Parser):
         print("    public {}({}) {{".format(self._classname, fields), file=self.file)
 
         for identifier in self.get_identifiers():
-            self.write_initialization_for(identifier[0])
+            self.write_initialization_for(identifier)
 
         print("    }", file=self.file)
         self.write_newline()
@@ -89,13 +89,10 @@ class JavaParser(Parser):
         print("", file=self.file, end="\n")
 
     def format_type_and_identifier(self):
-        return map(
-            lambda type_with_identifiers: "{} {}".format(list(type_with_identifiers.keys())[0],
-                                                         list(type_with_identifiers.values())[0]),
-            self._fields)
+        return ["{} {}".format(list(field.keys())[0], list(field.values())[0]) for field in self._fields]
 
     def get_identifiers(self):
-        return map(lambda type_with_identifiers: list(type_with_identifiers.values()), self._fields)
+        return [list(field.values())[0] for field in self._fields]
 
     def write_initialization_for(self, identifier):
         print("        this.{} = {};".format(identifier, identifier), file=self.file)
@@ -114,9 +111,7 @@ class JavaParser(Parser):
         self.write_newline()
 
     def to_pascal_case(self, identifier):
-        return re.sub(r'^[a-z]',
-                      lambda letter: list(letter.group(0))[0].upper(),
-                      identifier)
+        return re.sub(r'^[a-z]', lambda letter: letter.group(0).upper(), identifier)
 
     def write_mutator(self, type, identifier):
         print("    public void set{}({} {}) {{".format(self.to_pascal_case(identifier), type, identifier), file=self.file)
