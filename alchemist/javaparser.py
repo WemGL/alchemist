@@ -22,6 +22,7 @@ class JavaParser(Parser):
                 self.parse_field_match(comments)
             elif self.matched_end_pattern(line):
                 self.write_constructor()
+                self.write_accessors_and_mutators()
                 self.parse_end_match()
 
         self.file.close()
@@ -56,20 +57,19 @@ class JavaParser(Parser):
         print("public class {} {{".format(self._classname), file=self.file)
 
     def matched_comment_pattern(self, line):
-        self._current_match = re.compile("^[/]{2}\s.*$").search(line)
+        self._current_match = re.compile(r'^[/]{2}\s.*$').search(line)
         return self._current_match is not None
 
     def matched_class_pattern(self, line):
-        self._current_match = re.compile("^C\s(([A-Z](?=[a-z])[a-z]+)+)$").search(line)
+        self._current_match = re.compile(r'^C\s(([A-Z](?=[a-z])[a-z]+)+)$').search(line)
         return self._current_match is not None
 
     def matched_field_pattern(self, line):
-        self._current_match = re.compile("^F\s(\\b(?:[a-z]+)(?=[A-Z]+)(?:[A-Za-z]+)|[a-z]+\\b)\s*((?:[A-Z]?[a-z]+("
-                   "?:[[]])?))$").search(line)
+        self._current_match = re.compile(r'^F\s(\b(?:[a-z]+)(?=[A-Z]+)(?:[A-Za-z]+)|[a-z]+\b)\s*((?:[A-Z]?[a-z]+(?:[[]])?))$').search(line)
         return self._current_match is not None
 
     def matched_end_pattern(self, line):
-        self._current_match = re.compile("^E$").search(line)
+        self._current_match = re.compile(r'^E$').search(line)
         return self._current_match is not None
 
     def write_constructor(self):
@@ -86,6 +86,14 @@ class JavaParser(Parser):
             self.write_initialization_for(identifier[0])
 
         print("    }", file=self.file)
+        self.write_newline()
+
+    def write_accessors_and_mutators(self):
+        for type_with_identifier in self._fields:
+            type = list(type_with_identifier.keys())[0]
+            identifier = list(type_with_identifier.values())[0]
+            self.write_accessor(type, identifier)
+            self.write_mutator(type, identifier)
 
     def get_identifiers(self):
         return map(lambda type_with_identifiers: list(type_with_identifiers.values()), self._fields)
@@ -101,5 +109,22 @@ class JavaParser(Parser):
 
     def write_newline(self):
         print("", file=self.file, end="\n")
+
+    def write_accessor(self, type, identifier):
+        print("    public {} get{}() {{".format(type, self.to_pascal_case(identifier)), file=self.file)
+        print("        return {};".format(identifier), file=self.file)
+        print("    }", file=self.file)
+        self.write_newline()
+
+    def to_pascal_case(self, identifier):
+        return re.sub(r'^[a-z]',
+                      lambda letter: list(letter.group(0))[0].upper(),
+                      identifier)
+
+    def write_mutator(self, type, identifier):
+        print("    public void set{}({} {}) {{".format(self.to_pascal_case(identifier), type, identifier), file=self.file)
+        print("        this.{} = {};".format(identifier, identifier), file=self.file)
+        print("    }", file=self.file)
+        self.write_newline()
 
 

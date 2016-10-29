@@ -42,7 +42,7 @@ class TestAlchemist(unittest.TestCase):
         self._alchemist.transmute("Java")
         fh = open("AddProduct.java", "r")
         lines = fh.readlines()
-        self.assertEquals("}", lines[12].strip("\n"))
+        self.assertEquals("}", lines[37].strip("\n"))
 
     def test_transmute_writes_constructor_to_file(self):
         self._alchemist.transmute("Java")
@@ -55,9 +55,33 @@ class TestAlchemist(unittest.TestCase):
         self.assertEquals("    }", lines[11].strip("\n"))
 
 
-    def tearDown(self):
-        # self.skipTest("To verify output")
-        os.remove("./AddProduct.java")
+    def test_transmute_writes_accessors_and_mutators(self):
+        self._alchemist.transmute("Java")
+        fh = open("AddProduct.java", "r")
+        lines = fh.readlines()
+        self.assertEqual("    public int getId() {", lines[13].strip("\n"))
+        self.assertEqual("        return id;", lines[14].strip("\n"))
+        self.assertEqual("    }", lines[15].strip("\n"))
+
+        self.assertEqual("    public void setId(int id) {", lines[17].strip("\n"))
+        self.assertEqual("        this.id = id;", lines[18].strip("\n"))
+        self.assertEqual("    }", lines[19].strip("\n"))
+
+        self.assertEqual("    public char[] getName() {", lines[21].strip("\n"))
+        self.assertEqual("        return name;", lines[22].strip("\n"))
+        self.assertEqual("    }", lines[23].strip("\n"))
+
+        self.assertEqual("    public void setName(char[] name) {", lines[25].strip("\n"))
+        self.assertEqual("        this.name = name;", lines[26].strip("\n"))
+        self.assertEqual("    }", lines[27].strip("\n"))
+
+        self.assertEqual("    public String getOrderCode() {", lines[29].strip("\n"))
+        self.assertEqual("        return orderCode;", lines[30].strip("\n"))
+        self.assertEqual("    }", lines[31].strip("\n"))
+
+        self.assertEqual("    public void setOrderCode(String orderCode) {", lines[33].strip("\n"))
+        self.assertEqual("        this.orderCode = orderCode;", lines[34].strip("\n"))
+        self.assertEqual("    }", lines[35].strip("\n"))
 
 
 if __name__ == "__main__":
