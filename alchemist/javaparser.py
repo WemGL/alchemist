@@ -28,23 +28,9 @@ class JavaParser(Parser):
         self.file.close()
         fh.close()
 
-    def parse_end_match(self):
-        print("}", file=self.file)
-
-    def parse_field_match(self, comments):
-        if len(comments) > 0:
-            joined_comments = "\n".join(comments)
-            print(joined_comments, file=self.file)
-            comments.clear()
-        type = self._current_match.group(2)
-        identifier = self._current_match.group(1)
-        field = dict()
-        field[type] = identifier
-        self._fields.append(field)
-        print("    {} {};".format(type, identifier), file=self.file)
-
-    def parse_comment_match(self, comments):
-        comments.append(self._current_match.group(0))
+    def matched_class_pattern(self, line):
+        self._current_match = re.compile(r'^C\s(([A-Z](?=[a-z])[a-z]+)+)$').search(line)
+        return self._current_match is not None
 
     def parse_class_match(self, comments):
         self._classname = self._current_match.group(1)
@@ -60,13 +46,24 @@ class JavaParser(Parser):
         self._current_match = re.compile(r'^[/]{2}\s.*$').search(line)
         return self._current_match is not None
 
-    def matched_class_pattern(self, line):
-        self._current_match = re.compile(r'^C\s(([A-Z](?=[a-z])[a-z]+)+)$').search(line)
-        return self._current_match is not None
+    def parse_comment_match(self, comments):
+        comments.append(self._current_match.group(0))
 
     def matched_field_pattern(self, line):
         self._current_match = re.compile(r'^F\s(\b(?:[a-z]+)(?=[A-Z]+)(?:[A-Za-z]+)|[a-z]+\b)\s*((?:[A-Z]?[a-z]+(?:[[]])?))$').search(line)
         return self._current_match is not None
+
+    def parse_field_match(self, comments):
+        if len(comments) > 0:
+            joined_comments = "\n".join(comments)
+            print(joined_comments, file=self.file)
+            comments.clear()
+        type = self._current_match.group(2)
+        identifier = self._current_match.group(1)
+        field = dict()
+        field[type] = identifier
+        self._fields.append(field)
+        print("    {} {};".format(type, identifier), file=self.file)
 
     def matched_end_pattern(self, line):
         self._current_match = re.compile(r'^E$').search(line)
@@ -88,15 +85,8 @@ class JavaParser(Parser):
         print("    }", file=self.file)
         self.write_newline()
 
-    def write_accessors_and_mutators(self):
-        for type_with_identifier in self._fields:
-            type = list(type_with_identifier.keys())[0]
-            identifier = list(type_with_identifier.values())[0]
-            self.write_accessor(type, identifier)
-            self.write_mutator(type, identifier)
-
-    def get_identifiers(self):
-        return map(lambda type_with_identifiers: list(type_with_identifiers.values()), self._fields)
+    def write_newline(self):
+        print("", file=self.file, end="\n")
 
     def format_type_and_identifier(self):
         return map(
@@ -104,11 +94,18 @@ class JavaParser(Parser):
                                                          list(type_with_identifiers.values())[0]),
             self._fields)
 
+    def get_identifiers(self):
+        return map(lambda type_with_identifiers: list(type_with_identifiers.values()), self._fields)
+
     def write_initialization_for(self, identifier):
         print("        this.{} = {};".format(identifier, identifier), file=self.file)
 
-    def write_newline(self):
-        print("", file=self.file, end="\n")
+    def write_accessors_and_mutators(self):
+        for type_with_identifier in self._fields:
+            type = list(type_with_identifier.keys())[0]
+            identifier = list(type_with_identifier.values())[0]
+            self.write_accessor(type, identifier)
+            self.write_mutator(type, identifier)
 
     def write_accessor(self, type, identifier):
         print("    public {} get{}() {{".format(type, self.to_pascal_case(identifier)), file=self.file)
@@ -127,4 +124,6 @@ class JavaParser(Parser):
         print("    }", file=self.file)
         self.write_newline()
 
+    def parse_end_match(self):
+        print("}", file=self.file)
 
